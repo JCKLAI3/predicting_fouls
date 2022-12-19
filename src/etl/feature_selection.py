@@ -18,7 +18,7 @@ def filter_method(input_df, target_variable):
 
 def forward_selection(input_df, target_variable, significance_level=0.05):
     """Function to apply forward selection method for feature selection"""
-    initial_features = input_df.columns
+    initial_features = list(input_df.columns)
     best_features = []
     while len(initial_features) > 0:
         remaining_features = list(set(initial_features) - set(best_features))
@@ -36,7 +36,7 @@ def forward_selection(input_df, target_variable, significance_level=0.05):
 
 def backward_elimination(input_df, target_variable, significance_level=0.05):
     """Function to apply backward selection method for feature selection"""
-    features = input_df.columns
+    features = list(input_df.columns)
     while len(features) > 0:
         features_with_constant = sm.add_constant(input_df[features])
         p_values = sm.OLS(target_variable, features_with_constant).fit().pvalues[1:]
@@ -75,3 +75,13 @@ def feature_importance(input_df, target_variable):
         selected_features_indexes.append(feature[0])
     selected_features = input_df.columns[selected_features_indexes].to_list()
     return selected_features
+
+
+def get_feature_selection_variables_dict(input_df, target_variable):
+    """Function used to output a dictionary with keys as feature selection methods and values the variables."""
+    feature_selection_variables_dict = {}
+    feature_selection_variables_dict["filter_method"] = filter_method(input_df, target_variable)
+    feature_selection_variables_dict["forward_selection"] = forward_selection(input_df, target_variable)
+    feature_selection_variables_dict["backward_elimination"] = backward_elimination(input_df, target_variable)
+    feature_selection_variables_dict["feature_importance"] = feature_importance(input_df, target_variable)
+    return feature_selection_variables_dict
